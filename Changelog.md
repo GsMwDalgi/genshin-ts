@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.1.7
+
+- Fixed missing support in GIA encoding for `prefabId` list used as dictionary value and passed as argument, which caused related node parameters in generated graphs to lose their connections.
+
+BTW: development was paused last month due to some real-life matters, and work on the project will now continue.
+
 ## v0.1.6
 
 - For array index access, this project uses `bigint` as the integer type, while TypeScript does not allow `bigint` as an index type by default. To address this, this release introduces two auto-fix approaches: ESLint and a TypeScript plugin. See ESLint diagnostics for details.
