@@ -81,7 +81,10 @@ export const GraphUnit_Which = {
   ClassNode: 23,
   StructureDefinition: 29,
   ItemNode: 46,
-  IntegerFilter: 47
+  IntegerFilter: 47,
+  CreationStatusDecision: 51,
+  CreationSkill: 52,
+  CreationStatus: 53
 } as const
 export type GraphUnit_Which = (typeof GraphUnit_Which)[keyof typeof GraphUnit_Which]
 export interface NodeGraphWrapper {
@@ -225,9 +228,9 @@ export interface NodeGraph {
   /** Index = 7 */
   affiliations: GraphAffiliation[]
   /** Index = 100 */
-  xxx?: number
+  entrySlotIndex?: number
   /** Index = 101 */
-  xxxx?: number
+  evaluationInterval?: number
 }
 export interface NodeGraph_Id {
   /** Index = 1 */
@@ -253,7 +256,10 @@ export const NodeGraph_Id_Type = {
   StatusNode: 20003,
   ClassNode: 20004,
   ItemNode: 20005,
-  IntegerFilter: 20006
+  IntegerFilter: 20006,
+  CreationStatusDecision: 20007,
+  CreationSkill: 20008,
+  CreationStatus: 20009
 } as const
 export type NodeGraph_Id_Type = (typeof NodeGraph_Id_Type)[keyof typeof NodeGraph_Id_Type]
 export const NodeGraph_Id_Kind = {
@@ -427,7 +433,8 @@ export const ClientVarType = {
   Prefab_: 19,
   ConfigurationList_: 20,
   PrefabList_: 21,
-  LocalVariable_: 22
+  LocalVariable_: 22,
+  Dictionary_: 24
 } as const
 export type ClientVarType = (typeof ClientVarType)[keyof typeof ClientVarType]
 export interface GraphVariable {
@@ -523,6 +530,7 @@ export const VarBase_Class = {
   StructBase: 10001,
   ArrayBase: 10002,
   MapBase: 10003,
+  ClientContainerMeta: 10006,
   MapPair: 10007
 } as const
 export type VarBase_Class = (typeof VarBase_Class)[keyof typeof VarBase_Class]
@@ -551,10 +559,31 @@ export interface VarBase_ItemType_PairItems {
   value: VarType
   /** Index = 3 */
   structId?: number
+  /** Index = 4 */
+  keyClientType?: ClientVarType
+  /** Index = 5 */
+  valueClientType?: ClientVarType
 }
+export interface VarBase_ItemType_ClientContainerBinding {
+  /** Index = 1 */
+  mode?: number
+  /** Index = 2 */
+  kind?: number
+  /** Index = 4 */
+  keyType?: ClientVarType
+  /** Index = 5 */
+  valueType?: ClientVarType
+}
+export interface VarBase_ItemType_ClientMarker {}
 export interface VarBase_ItemType_ClientType {
   /** Index = 2 */
   type: ClientVarType
+  /** Index = 3 */
+  implKind?: number
+  /** Index = 100 */
+  marker?: VarBase_ItemType_ClientMarker
+  /** Index = 101 */
+  containerBinding?: VarBase_ItemType_ClientContainerBinding
 }
 export interface VarBase_ItemType_ServerType {
   /** Index = 1 */
@@ -677,6 +706,21 @@ export interface ComplexValueStruct_Wrapper {
    * One of the field: type
    */
   mapPair?: VarBase_ItemType_PairItems
+  /** Index = 103
+   *
+   * One of the field: type
+   */
+  clientContainerBinding?: VarBase_ItemType_ClientContainerBinding
+}
+export interface StatusNodeExtension {
+  /** Index = 1 */
+  type: number
+  /** Index = 100 */
+  inner?: StatusNodeExtension_Inner
+}
+export interface StatusNodeExtension_Inner {
+  /** Index = 1 */
+  value: number
 }
 export interface GraphNode {
   /** Index = 1 */
@@ -693,8 +737,14 @@ export interface GraphNode {
   y: number
   /** Index = 7 */
   comments?: Comments
+  /** Index = 8 */
+  contextDeclaration?: NodePin_Index
+  /** Index = 9 */
+  signalVersion?: number
   /** Index = 10 */
   usingStruct: GraphAffiliation_Info[]
+  /** Index = 11 */
+  statusNodeExtension?: StatusNodeExtension
 }
 export interface NodeProperty {
   /** Index = 1 */
@@ -710,7 +760,8 @@ export const NodeProperty_Type = {
   Unknown: 0,
   Server: 20000,
   Filter: 20001,
-  Skill: 20002
+  Skill: 20002,
+  CreationStatusNode: 20007
 } as const
 export type NodeProperty_Type = (typeof NodeProperty_Type)[keyof typeof NodeProperty_Type]
 export interface NodePin {
@@ -746,7 +797,8 @@ export const NodePin_Index_Kind = {
   OutFlow: 2,
   InParam: 3,
   OutParam: 4,
-  ClientExecNode: 5
+  ClientExecNode: 5,
+  ClientSignal: 6
 } as const
 export type NodePin_Index_Kind = (typeof NodePin_Index_Kind)[keyof typeof NodePin_Index_Kind]
 export interface NodePin_Index_Id {

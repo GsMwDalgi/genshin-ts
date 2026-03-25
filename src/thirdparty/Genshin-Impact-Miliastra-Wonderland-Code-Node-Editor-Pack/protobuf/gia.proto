@@ -38,6 +38,9 @@ message GraphUnit {
     StructureDefinition = 29;
     ItemNode = 46;
     IntegerFilter = 47;
+    CreationStatusDecision = 51;
+    CreationSkill = 52;
+    CreationStatus = 53;
   };
 
   Id id = 1;                  // Self id
@@ -144,6 +147,9 @@ message NodeGraph {
       ClassNode = 20004;
       ItemNode = 20005;
       IntegerFilter = 20006;
+      CreationStatusDecision = 20007;
+      CreationSkill = 20008;
+      CreationStatus = 20009;
     };
     enum Kind {
       Unknown3 = 0;
@@ -165,8 +171,8 @@ message NodeGraph {
   repeated GraphVariable graphValues = 6;
   repeated GraphAffiliation affiliations = 7;
 
-  optional int32 xxx = 100;
-  optional float xxxx = 101;
+  optional int32 entrySlotIndex = 100;
+  optional float evaluationInterval = 101;
 }
 
 message Comments {
@@ -293,6 +299,7 @@ enum ClientVarType {
   ConfigurationList_ = 20; // type: L<Cfg>, typeid: 20
   PrefabList_ = 21;        // type
   LocalVariable_ = 22;     // type
+  Dictionary_ = 24;        // type: Dict<K,V>
 }
 message GraphVariable {
   string name = 2;
@@ -317,6 +324,7 @@ message VarBase {
     StructBase = 10001;
     ArrayBase = 10002;
     MapBase = 10003;
+    ClientContainerMeta = 10006; // client container type binding metadata
 
     MapPair = 10007;
   }
@@ -326,9 +334,21 @@ message VarBase {
       VarType key = 1;
       VarType value = 2;
       optional int64 structId = 3; // only when value is struct
+      optional ClientVarType keyClientType = 4;
+      optional ClientVarType valueClientType = 5;
     }
+    message ClientContainerBinding {
+      optional int32 mode = 1;
+      optional int32 kind = 2;
+      optional ClientVarType keyType = 4;
+      optional ClientVarType valueType = 5;
+    }
+    message ClientMarker {}
     message ClientType {
       ClientVarType type = 2; // 不是, 怎么类型枚举都不一样. 想死了
+      optional int32 implKind = 3; // observed in client container types
+      optional ClientMarker marker = 100; // observed on structure-like client type references
+      optional ClientContainerBinding containerBinding = 101; // observed on client dictionary types
     }
     message ServerType {
       enum Kind {
@@ -419,6 +439,7 @@ message ComplexValueStruct { // Map KV, Array Item, Struct Item
     oneof type {
       VarBase.ItemType.StructItem item = 100;
       VarBase.ItemType.PairItems mapPair = 102;
+      VarBase.ItemType.ClientContainerBinding clientContainerBinding = 103;
     }
   }
   int32 class = 4;
@@ -434,7 +455,16 @@ message GraphNode {
   float x = 5;                          // xpos
   float y = 6;                          // ypos
   optional Comments comments = 7;       // comments
+  optional NodePin.Index contextDeclaration = 8; // client graph entry context declaration
+  optional int32 signalVersion = 9;     // signal/listen declaration version
   repeated GraphAffiliation.Info usingStruct = 10;
+  optional StatusNodeExtension statusNodeExtension = 11; // observed in creation_status / creation_status_decision
+}
+
+message StatusNodeExtension {
+  int32 type = 1;
+  message Inner { int32 value = 1; }
+  optional Inner inner = 100;
 }
 
 message NodeProperty {
@@ -443,6 +473,7 @@ message NodeProperty {
     Server = 20000;
     Filter = 20001;
     Skill = 20002;
+    CreationStatusNode = 20007;
   }
 
   NodeGraph.Id.Class class = 1; // 10001
@@ -459,7 +490,8 @@ message NodePin {
       OutFlow = 2;
       InParam = 3;
       OutParam = 4;
-      ClientExecNode = 5; // only in client execution nodes
+      ClientExecNode = 5; // client exec/binding metadata
+      ClientSignal = 6;   // client signal/topic metadata
     }
     Kind kind = 1;
     int32 index = 2; // index of the kind
@@ -474,7 +506,7 @@ message NodePin {
   VarBase value = 3;
   int32 type = 4; // Be careful! VarType in Server and ClientVarType in Client
   repeated NodeConnection connects = 5; // OutFlow or InParam
-  optional Index clientExecNode = 6;    // Only when kind === ClientExecNode
+  optional Index clientExecNode = 6;    // Client binding metadata, usually kind 5/6
   optional int32 compositePinIndex = 7; // Only when calling composite node
 }
 
