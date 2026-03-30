@@ -6,6 +6,7 @@ import {
   faction,
   generic,
   guid,
+  value,
   vec3
 } from '../runtime/value.js'
 import {

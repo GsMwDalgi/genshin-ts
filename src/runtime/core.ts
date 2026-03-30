@@ -25,13 +25,23 @@ import { getRuntimeOptions } from './runtime_config.js'
 import { installScopedServerGlobals, installServerGlobals } from './server_globals.js'
 import {
   bool,
+  configId,
   dict,
   ensureLiteralStr,
+  entity,
   enumeration,
+  float,
+  guid,
+  int,
   list,
   localVariable,
+  prefabId,
+  str,
   value,
-  type DictValueType
+  vec3,
+  type DictValueType,
+  type SignalArgDef,
+  type SignalArgsToPayload
 } from './value.js'
 import {
   parseVariableDefinitions,

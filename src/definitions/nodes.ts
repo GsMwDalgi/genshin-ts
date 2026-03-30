@@ -47,6 +47,7 @@ import {
   ReadonlyDict,
   RuntimeParameterValueTypeMap,
   RuntimeReturnValueTypeMap,
+  SignalArgDef,
   str,
   struct,
   StrValue,
@@ -6807,13 +6808,32 @@ export class ServerExecutionFlowFunctions {
    *
    * 信号名（仅支持字面量字符串）
    */
-  sendSignal(signalName: StrValue): void {
+  sendSignal(
+    signalName: StrValue,
+    signalArgs?: Array<SignalArgDef & { value: any }>
+  ): void {
     const signalNameObj = ensureLiteralStr(signalName, 'signalName')
+    const args: value[] = [signalNameObj]
+    let signalParams: Array<{ name: string; type: string }> | undefined
+    if (signalArgs && signalArgs.length > 0) {
+      signalParams = signalArgs.map((arg) => {
+        let v = arg.value
+        // Auto-wrap raw JS arrays into assembly_list node (conn) for _list types
+        if (arg.type.endsWith('_list') && Array.isArray(v)) {
+          const baseType = arg.type.slice(0, -5)
+          v = this.assemblyList(v, baseType as any)
+        }
+        const parsed = parseValue(v, arg.type as any)
+        args.push(parsed)
+        return { name: arg.name, type: arg.type }
+      })
+    }
     this.registry.registerNode({
       id: 0,
       type: 'exec',
       nodeType: 'send_signal',
-      args: [signalNameObj]
+      args,
+      ...(signalParams ? { signalParams } : {})
     })
   }
 
