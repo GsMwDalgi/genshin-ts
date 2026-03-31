@@ -1,0 +1,30 @@
+{
+  "name": "root",
+  "type": "distributor",
+  "role": "General-purpose work distribution",
+  "model": "opus",
+  "covers": [],
+  "parent": null,
+  "children": [
+    "root~dev",
+    "root~proj-setup",
+    "root~protocol",
+    "root~skill-fix"
+  ],
+  "status": "idle",
+  "generation": 1,
+  "model_detected": "claude-opus-4-6",
+  "agent_id": "ae04a18f4c0f27323",
+  "started_at": "2026-03-31T07:16:38",
+  "last_active": "2026-03-31T08:48:56",
+  "team_name": "gsts",
+  "transcript_path": "C:\\Users\\Rterg\\.claude\\projects\\D--MyDrive-Repos-MiliastraWonderland-genshin-ts\\dcffb872-b082-4999-b069-685da5d76751\\subagents\\agent-ae04a18f4c0f27323.jsonl",
+  "tokens": {
+    "total_input_tokens": 221,
+    "total_output_tokens": 16871,
+    "total_cache_read_tokens": 5770165,
+    "total_cache_create_tokens": 270065,
+    "last_context_size": 66869,
+    "turn_count": 145
+  }
+}

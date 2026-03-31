@@ -1,0 +1,8 @@
+# Workspace Files (auto-generated — do not edit)
+result-001.md | 2026-03-31T08:22 | # Directive #001 Result — node-graph-coder skill fix
+task-docs-revision.md | 2026-03-31T08:48 | # Task: Revise team-setup-guide.md for end-user audience (Directive #005)
+task-pkg-and-docs.md | 2026-03-31T12:50 | # Task: Update package.json + revise setup guide (Directive #006)
+task-project-setup.md | 2026-03-31T08:28 | # Task: Set up gsts-sandbox and elementalist projects
+task-protocol-analysis.md | 2026-03-31T08:28 | # Task: Analyze GIA/GIL file protocols
+task-skill-fix.md | 2026-03-31T08:19 | # Task: Fix node-graph-coder skill — migrate prompt-reference docs
+task-team-docs.md | 2026-03-31T08:35 | # Task: Write team setup guide (Directive #003)

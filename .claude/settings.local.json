@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(handoff)",
+      "Bash(python:*)",
+      "Bash(find D:/MyDrive/Repos/MiliastraWonderland/genshin-ts/.claude/tree/gsts -name *002* -o -name *task-proj*)",
+      "Bash(node -e \"require\\(''node:process''\\); console.log\\(process.version\\)\")",
+      "Bash(node -e \"const v = process.versions.node.split\\(''''.''''\\).map\\(Number\\); console.log\\(v[0] >= 20 ? ''''Node 20+ supports --env-file flag'''' : ''''no native .env support''''\\)\")",
+      "Read(//d/MyDrive/Repos/MiliastraWonderland/gsts-sandbox/**)",
+      "Bash(npm unlink:*)",
+      "Bash(npm install:*)"
+    ]
+  }
+}

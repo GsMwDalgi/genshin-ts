@@ -1,0 +1,25 @@
+{
+  "name": "root~skill-fix",
+  "type": "executor",
+  "role": "Migrate prompt-reference docs into node-graph-coder skill and fix paths",
+  "model": "sonnet",
+  "covers": [],
+  "parent": "root",
+  "children": [],
+  "status": "working",
+  "generation": 1,
+  "model_detected": "claude-sonnet-4-6",
+  "agent_id": "a3e4d6e082e78bfd0",
+  "started_at": "2026-03-31T08:19:50",
+  "last_active": "2026-03-31T08:28:58",
+  "team_name": "gsts",
+  "transcript_path": "C:\\Users\\Rterg\\.claude\\projects\\D--MyDrive-Repos-MiliastraWonderland-genshin-ts\\dcffb872-b082-4999-b069-685da5d76751\\subagents\\agent-a843a8deb6851cfdd.jsonl",
+  "tokens": {
+    "total_input_tokens": 40,
+    "total_output_tokens": 4063,
+    "total_cache_read_tokens": 703488,
+    "total_cache_create_tokens": 36150,
+    "last_context_size": 28220,
+    "turn_count": 32
+  }
+}

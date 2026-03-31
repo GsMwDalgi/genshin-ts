@@ -1,0 +1,25 @@
+{
+  "name": "root~dev",
+  "type": "executor",
+  "role": "genshin-ts feature development, bug fixes, build — uses node-graph-coder skill",
+  "model": "opus",
+  "covers": [],
+  "parent": "root",
+  "children": [],
+  "status": "idle",
+  "generation": 1,
+  "model_detected": "claude-opus-4-6",
+  "agent_id": "af400c16426284f7e",
+  "started_at": "2026-03-31T08:23:55",
+  "last_active": "2026-03-31T08:34:13",
+  "team_name": "gsts",
+  "transcript_path": "C:\\Users\\Rterg\\.claude\\projects\\D--MyDrive-Repos-MiliastraWonderland-genshin-ts\\dcffb872-b082-4999-b069-685da5d76751\\subagents\\agent-af400c16426284f7e.jsonl",
+  "tokens": {
+    "total_input_tokens": 1076,
+    "total_output_tokens": 5709,
+    "total_cache_read_tokens": 1481179,
+    "total_cache_create_tokens": 40260,
+    "last_context_size": 34857,
+    "turn_count": 59
+  }
+}
