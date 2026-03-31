@@ -16,6 +16,8 @@
 5. [GIL Scaffold CLI 명령 (`gsts scaffold`)](#5-gil-scaffold-cli-명령)
 6. [GIL Reader 모듈](#6-gil-reader-모듈)
 7. [.gitignore 업데이트](#7-gitignore-업데이트)
+8. [onSignal 시그널 인자 전파 수정](#8-onsignal-시그널-인자-전파-수정)
+9. [프로토콜 문서 통합](#9-프로토콜-문서-통합)
 
 ---
 
@@ -179,6 +181,37 @@ g.server().onSignal('my_signal', [
 - `readGilNodeGraphs(gilBytes)` — 모든 NodeGraph의 요약 정보 목록 반환 (`NodeGraphSummary[]`)
 - `readGilNodeGraph(gilBytes, targetId)` — 특정 NodeGraph의 상세 정보 반환 (`NodeGraphDetail`)
 - 노드 타입 역참조 (게임 내부 ID → camelCase 이름), 변수 정보 파싱, 실행 연결 체인 파싱
+
+---
+
+## 8. onSignal 시그널 인자 전파 수정
+
+**카테고리:** 버그 수정
+**영향 범위:** 런타임, 컴파일러
+
+`onSignal` 핸들러가 `SignalArgDef[]`를 받지 못해 시그널 인자가 포함된 코드의 GIA 생성이 실패하던 문제를 수정했다. 또한 `parseValue`에서 `entity` 타입의 bigint/int 폴백 경로가 누락되어 `setCustomVariable`에 entity 값 전달 시 오류가 발생하던 문제를 수정했다.
+
+### 변경 파일
+
+| 파일 | 변경 내용 |
+|------|----------|
+| `src/runtime/core.ts` | `onSignal`이 `SignalArgDef[]`를 수용하고 handler 체인에 전파하도록 수정, output pin에 `signalParams` 메타데이터 생성 |
+| `src/compiler/ir_to_gia_transform/index.ts` | `monitor_signal` 노드의 output pin 생성 로직 추가 |
+| `src/definitions/nodes.ts` | `parseValue`의 `entity` case에 `entityLiteral` bigint/int 폴백 추가 |
+
+### 증상
+
+- `str(): unsupported input type` — 시그널 인자를 `str()`로 변환 시 실패
+- `Invalid value type: entity` — `setCustomVariable`에 entity 값 전달 시 실패
+
+---
+
+## 9. 프로토콜 문서 통합
+
+**카테고리:** 문서
+**영향 범위:** notes/protocol/
+
+두 소스(genshin-ts-run/docs/gia-protocol 14파일 + notes/protocol 5파일)를 18개 통합 문서로 병합했다. 확신도 분류(CONFIRMED/INFERRED/SPECULATED) 체계를 유지하고, 충돌 시 바이너리 검증 기반의 원본(gia-protocol)을 우선했다.
 
 ---
 

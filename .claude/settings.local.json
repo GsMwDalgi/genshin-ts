@@ -8,7 +8,13 @@
       "Bash(node -e \"const v = process.versions.node.split\\(''''.''''\\).map\\(Number\\); console.log\\(v[0] >= 20 ? ''''Node 20+ supports --env-file flag'''' : ''''no native .env support''''\\)\")",
       "Read(//d/MyDrive/Repos/MiliastraWonderland/gsts-sandbox/**)",
       "Bash(npm unlink:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(cp:*)",
+      "Bash(rm -rf dist)",
+      "Bash(npm run:*)",
+      "Bash(cd:*)",
+      "Bash(cp \"D:/MyDrive/Repos/MiliastraWonderland/genshin-ts-run/docs/gia-protocol/effect-asset-catalog-timed.md\" \"D:/MyDrive/Repos/MiliastraWonderland/genshin-ts/notes/protocol/effect-catalog-timed.md\")",
+      "Bash(cp \"D:/MyDrive/Repos/MiliastraWonderland/genshin-ts-run/docs/gia-protocol/effect-asset-catalog-loop.md\" \"D:/MyDrive/Repos/MiliastraWonderland/genshin-ts/notes/protocol/effect-catalog-loop.md\")"
     ]
   }
 }

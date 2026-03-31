@@ -13,6 +13,7 @@ import { isListValueInfo, type ListValueInfo } from '../../runtime/variables.js'
 import type { NodeType } from '../../thirdparty/Genshin-Impact-Miliastra-Wonderland-Code-Node-Editor-Pack/gia_gen/nodes.js'
 import { Graph, Node, NodeIdFor, Pin, wrap_gia, type Root as GiaRoot } from '../gia_vendor.js'
 import { buildExecutionGraph, layoutPositions } from './layout.js'
+import { SIGNAL_ARG_TYPE_MAP } from './mappings.js'
 import { buildConnTypeIndex, resolveGiaNodeId } from './node_id.js'
 import { optimizeTimerDispatchAggregate } from './optimize_timer_dispatch.js'
 import { ensureInputPinWithType, setClientExecLiteralArgValue, setEnumArgValue, setLiteralArgValue } from './pins.js'
@@ -344,6 +345,19 @@ export function irToGia(ir: IRDocument, opts: IrToGiaOptions): Uint8Array {
             // conn type: create empty InParam pin with type info for Pin.encode() matching
             ensureInputPinWithType(giaNode, i, param.type)
           }
+        }
+      }
+      // Signal arguments: generate output pins for monitor_signal args
+      // Standard monitorSignal has 3 outputs (entity, guid, entity) at indices 0-2
+      if (nodeType === 'monitor_signal' && irNode.signalParams) {
+        const baseOutputCount = 3
+        for (let i = 0; i < irNode.signalParams.length; i++) {
+          const param = irNode.signalParams[i]
+          if (!SIGNAL_ARG_TYPE_MAP[param.type]) continue
+          const pinType = valueTypeToNodeType(param.type as ValueType)
+          const p = new Pin(giaNode.GenericId, 4, baseOutputCount + i)
+          p.setType(pinType)
+          giaNode.pins.push(p)
         }
       }
       return true

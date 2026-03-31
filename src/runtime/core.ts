@@ -38,6 +38,7 @@ import {
   prefabId,
   str,
   value,
+  ValueClassMap,
   vec3,
   type DictValueType,
   type SignalArgDef,
@@ -189,12 +190,14 @@ export type ServerGraphApi<
    *
    * GSTS 注: 你仍然需要在编辑器内的信号管理器注册信号; 使用信号分发能够避免一些大循环触发负载限制, 可用于性能优化
    */
-  onSignal(
+  onSignal<Args extends readonly SignalArgDef[] = []>(
     signalName: string,
     handler: (
-      evt: ServerEventPayloadsByMode<Mode>['monitorSignal'],
+      evt: ServerEventPayloadsByMode<Mode>['monitorSignal'] &
+        SignalArgsToPayload<Args>,
       f: ServerExecutionFlowFunctionsForLang<Vars, Lang, Mode>
-    ) => void
+    ) => void,
+    signalArgs?: Args
   ): ServerGraphApi<Vars, Lang, Mode>
 }
 
@@ -446,10 +449,11 @@ export class MetaCallRegistry {
   runServerHandler<E extends ServerEventName>(
     eventName: E,
     handler: (evt: ServerEventPayloads[E], f: ServerExecutionFlowFunctions) => void,
-    inputArgs: value[] = []
+    inputArgs: value[] = [],
+    signalArgs?: readonly SignalArgDef[]
   ) {
     this.ensureBootstrapFlow()
-    const evt = this.registerEvent(eventName, ServerEventMetadata, inputArgs)
+    const evt = this.registerEvent(eventName, ServerEventMetadata, inputArgs, signalArgs)
     const fns = new ServerExecutionFlowFunctions(this)
     const gsts = ensureGsts() as unknown as GstsInternal
     const prevF = gsts[kServerF]
@@ -526,7 +530,8 @@ export class MetaCallRegistry {
   registerEvent<E extends ServerEventName>(
     eventName: E,
     metadata: ServerEventMetadataType,
-    inputArgs: value[] = []
+    inputArgs: value[] = [],
+    signalArgs?: readonly SignalArgDef[]
   ): ServerEventPayloads[E] {
     const eventParams = metadata[eventName]
 
@@ -573,6 +578,35 @@ export class MetaCallRegistry {
         eventObj[param.name] = arg
       }
     })
+
+    // Signal args: create additional output pins for custom signal parameters
+    if (signalArgs && signalArgs.length > 0) {
+      eventNode.signalParams = signalArgs.map((arg) => ({
+        name: arg.name,
+        type: arg.type
+      }))
+      for (const argDef of signalArgs) {
+        const isListType = argDef.type.endsWith('_list')
+        if (isListType) {
+          const elemType = argDef.type.slice(0, -5) as string
+          const l = new list(elemType as any)
+          l.markPin(eventNode, argDef.name, eventArgs.length)
+          eventArgs.push(l)
+          // @ts-ignore 强制允许
+          eventObj[argDef.name] = l
+        } else {
+          const cls = ValueClassMap[argDef.type as keyof typeof ValueClassMap]
+          if (!cls) {
+            throw new Error(`Unknown signal arg type: ${argDef.type}`)
+          }
+          const v = new (cls as new () => value)()
+          v.markPin(eventNode, argDef.name, eventArgs.length)
+          eventArgs.push(v)
+          // @ts-ignore 强制允许
+          eventObj[argDef.name] = v
+        }
+      }
+    }
 
     this.flows.push({
       eventNode,
@@ -829,7 +863,8 @@ function server<Vars extends VariablesDefinition = VariablesDefinition>(
       evt: ServerEventPayloadsByMode<ResolvedMode>[ServerEventNameToEn<E>],
       f: ServerExecutionFlowFunctionsForLang<Vars, ResolvedLang, ResolvedMode>
     ) => void,
-    inputArgs: value[] = []
+    inputArgs: value[] = [],
+    signalArgs?: readonly SignalArgDef[]
   ) => {
     const resolvedEventName = resolveEventName(eventName) as ServerEventNameToEn<E>
     const wrappedHandler = (
@@ -842,7 +877,7 @@ function server<Vars extends VariablesDefinition = VariablesDefinition>(
         f as unknown as ServerExecutionFlowFunctionsForLang<Vars, ResolvedLang, ResolvedMode>
       )
     }
-    registry.runServerHandler(resolvedEventName, wrappedHandler, inputArgs)
+    registry.runServerHandler(resolvedEventName, wrappedHandler, inputArgs, signalArgs)
   }
 
   const api = {
@@ -861,10 +896,11 @@ function server<Vars extends VariablesDefinition = VariablesDefinition>(
       handler: (
         evt: ServerEventPayloadsByMode<ResolvedMode>['monitorSignal'],
         f: ServerExecutionFlowFunctionsForLang<Vars, ResolvedLang, ResolvedMode>
-      ) => void
+      ) => void,
+      signalArgs?: readonly SignalArgDef[]
     ) {
       const signalNameObj = ensureLiteralStr(signalName, 'signalName')
-      runHandler('monitorSignal', handler, [signalNameObj])
+      runHandler('monitorSignal', handler as never, [signalNameObj], signalArgs)
       return this
     }
   }

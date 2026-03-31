@@ -11,10 +11,10 @@ TypeScript -> GS IR -> IR JSON -> GIA binary -> Inject into GIL
 ## High-Level Pipeline
 
 ```
-┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
-│ .ts file │───>│  GS IR   │───>│ IR JSON  │───>│  .gia    │───>│ patched  │
-│ (source) │    │ (interme)│    │ (serial) │    │ (binary) │    │  .gil    │
-└──────────┘    └──────────┘    └──────────┘    └──────────┘    └──────────┘
++----------+    +----------+    +----------+    +----------+    +----------+
+| .ts file |--->|  GS IR   |--->| IR JSON  |--->|  .gia    |--->| patched  |
+| (source) |    | (interme)|    | (serial) |    | (binary) |    |  .gil    |
++----------+    +----------+    +----------+    +----------+    +----------+
   ts_to_gs       gs_to_ir       ir_to_gia        injector
 ```
 
@@ -27,15 +27,9 @@ Entry: `src/compiler/ir_to_gia_transform/index.ts` -> `irToGia()`
 3. Calls `Graph.encode()` to produce a `Root` protobuf structure
 4. Serializes with `wrap_gia()` which:
    - Encodes the Root message via protobufjs
-   - Prepends 20-byte header (left_size=1, schema=1, head_tag=0x0326, file_type=3, proto_size)
+   - Prepends 20-byte header (left_size, schema=1, head_tag=0x0326, file_type=3, proto_size)
    - Appends 4-byte tail (tail_tag=0x0679)
 5. Writes to `.gia` file
-
-### Graph Name Convention
-Generated graphs are prefixed with `_GSTS` (e.g. `_GSTS_my_graph`). This prefix is used during injection to verify the target graph is already a genshin-ts graph.
-
-### Parallel Compilation
-`ir_to_gia_pipeline.ts` supports parallel GIA generation by spawning child processes, each running `ir_to_gia_transform/runner.ts`. Uses `os.cpus().length - 1` workers.
 
 ## Step 2: GIA Injection into GIL (injector)
 
@@ -83,10 +77,7 @@ Entry: `src/injector/index.ts` -> `createInjector()` -> `injectBytes()`
    - Set graph ID and type on new graph
    - Verify new graph with protobufjs `verify()`
    - Encode new graph to bytes with protobufjs `encode()`
-   - `applyReplacement()`:
-     - Build patch: replace old blob bytes with new blob bytes
-     - Update all ancestor length-prefixed fields (protobuf varint lengths)
-     - Apply patches in reverse order to maintain offset validity
+   - `applyReplacement()`: binary patch (see below)
 
 7. **Rebuild file**: `buildFile()`
    - Recompute header with new payload size
@@ -97,7 +88,7 @@ Entry: `src/injector/index.ts` -> `createInjector()` -> `injectBytes()`
 - `bytes`: new GIL file bytes
 - `mode`: always `'replace'`
 
-## Binary Patching Details (applyReplacement)
+## Binary Patching Details (applyReplacement) [CONFIRMED]
 
 The most delicate part of injection is updating the protobuf binary in-place:
 
@@ -118,17 +109,17 @@ The most delicate part of injection is updating the protobuf binary in-place:
 
 This ensures the protobuf container structure remains valid after replacing an arbitrary-depth nested message.
 
-## Signal Node Handling
-
-Signal nodes are Beyond Mode's event system (send/monitor/listen patterns):
+## Signal Node Resolution (Injection Time) [CONFIRMED]
 
 ### Placeholder IDs (compile time)
-| Placeholder | Kind       |
-|-------------|------------|
-| 300000      | send       |
-| 300001      | monitor    |
 
-### Resolution (injection time)
+| Placeholder | Kind    |
+|-------------|---------|
+| 300000      | send    |
+| 300001      | monitor |
+
+### Resolution Process
+
 1. Scan GIL for composite definitions (CompositeDef) that have signal definitions
 2. Extract signal name from CompositeDef field 107 -> nested field 101/102 -> name field 1
 3. Determine kind: `type=20002` -> sendServer, else `outputs>=3` -> monitor, else send
@@ -138,9 +129,17 @@ Signal nodes are Beyond Mode's event system (send/monitor/listen patterns):
    - Look up resolved ID from map
    - Apply full NodeGraphIdInfo (class, type, kind, nodeId) to both genericId and concreteId
 
-## File Injection (injectFile)
+## File Injection (injectFile) [CONFIRMED]
 
 Simple wrapper around `injectBytes`:
 1. Read GIL and GIA files from disk
 2. Call `injectBytes()`
 3. Write result to `outPath` (defaults to overwriting original GIL)
+
+## Sources
+
+- `src/compiler/ir_to_gia_transform/` — IR -> GIA 변환
+- `src/injector/index.ts` — createInjector, injectBytes
+- `src/injector/node_graph.ts` — NodeGraph 스캔/패치
+- `src/injector/signal_nodes.ts` — 시그널 노드 해석
+- `protobuf/decode.ts` — wrap/unwrap

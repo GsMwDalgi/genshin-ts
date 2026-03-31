@@ -8,6 +8,9 @@
 
 - DIRECTIVE #005 — Revise team setup guide for end-user (received 2026-03-31, COMPLETE — revision + 11-item review feedback applied)
 - DIRECTIVE #006 — Update package.json to git URL + revise guide as general user docs (received 2026-03-31, COMPLETE)
+- DIRECTIVE #007 — Fix parseValue and str() type conversion bugs (received 2026-03-31, COMPLETE)
+
+- DIRECTIVE #008 — Merge two protocol doc sets into unified notes/protocol/ (received 2026-03-31, COMPLETE — PASS WITH NOTES)
 
 ## Refs
 - directives/001-skill-fix.md | directive detail
@@ -17,8 +20,5 @@
 - directives/005-docs-revision.md | docs revision detail
 
 ## Notes
-- root~skill-fix: terminated
-- root~proj-setup (sonnet): completed #006. Idle.
-- root~protocol (opus): idle (completed #004)
-- root~dev (opus): idle. Reserved for future feature dev only.
-- #005 flow: proj-setup revises -> STATUS_REPORT to leader -> leader reviews -> possible feedback for second pass
+- root~dev (opus): idle. Only remaining child.
+- Deleted: root~protocol, root~doc-struct, root~doc-writer, root~doc-review
