@@ -1,0 +1,23 @@
+{
+  "name": "compat-test",
+  "type": "executor",
+  "role": "GIL 호환성 테스트 — elementalist 소스 복제, ID 조정, 인젝션 시도",
+  "role_doc": "",
+  "model": "opus",
+  "covers": [],
+  "parent": null,
+  "children": [],
+  "status": "working",
+  "generation": 1,
+  "model_detected": "claude-opus-4-6",
+  "agent_id": "a906b2bccde6cab15",
+  "started_at": "2026-04-09T09:31:36",
+  "last_active": "2026-04-09T09:31:42",
+  "team_name": "gsts",
+  "transcript_path": "",
+  "tokens": {
+    "last_context_size": 11785,
+    "total_output_tokens": 163,
+    "turn_count": 3
+  }
+}

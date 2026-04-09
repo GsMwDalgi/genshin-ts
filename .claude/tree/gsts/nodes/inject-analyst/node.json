@@ -1,0 +1,26 @@
+{
+  "name": "inject-analyst",
+  "type": "executor",
+  "role": "Injector 로직 분석 — 소스 코드와 기존 문서 대조, 포맷 변경 취약점 파악",
+  "role_doc": "",
+  "model": "opus",
+  "covers": [],
+  "parent": null,
+  "children": [],
+  "status": "idle",
+  "generation": 1,
+  "model_detected": "claude-opus-4-6",
+  "agent_id": "ada2aef3a0997ce80",
+  "started_at": "2026-04-09T09:34:56",
+  "last_active": "2026-04-09T10:05:34",
+  "team_name": "gsts",
+  "transcript_path": "C:\\Users\\Rterg\\.claude\\projects\\D--MyDrive-Repos-MiliastraWonderland-genshin-ts\\d8ee4242-f547-453b-a34c-8027d07d5ce1\\subagents\\agent-ada2aef3a0997ce80.jsonl",
+  "tokens": {
+    "total_input_tokens": 99,
+    "total_output_tokens": 36700,
+    "total_cache_read_tokens": 3195967,
+    "total_cache_create_tokens": 597310,
+    "last_context_size": 78219,
+    "turn_count": 83
+  }
+}

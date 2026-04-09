@@ -49,10 +49,10 @@ Entry: `src/injector/index.ts` -> `createInjector()` -> `injectBytes()`
    - If targetId provided and differs from graph's ID, overwrite it
 
 2. **Parse GIL structure**:
-   - Validate GIL header tags (0x0326 / 0x0679)
+   - Validate GIL header tags (0x0326 / 0x0679) — note: `file_type` and `schema_version` are read and preserved but **not validated** (any value passes)
    - Extract payload (bytes 20 to EOF-4)
-   - Run `parseMessage()` to build field index (recursive protobuf wire-format scanner)
-   - Collect NodeGraph blob fields at path 10.1.1
+   - Run `parseMessage()` to build field index (recursive protobuf wire-format scanner, max depth=6)
+   - Collect NodeGraph blob fields at path 10.1.1 via `ParseCollectors.nodeGraphBlobFields`
 
 3. **Patch signal node IDs**: `patchSignalNodeIds()`
    - Scans the new graph for placeholder node IDs (300000=send, 300001=monitor)
@@ -67,9 +67,14 @@ Entry: `src/injector/index.ts` -> `createInjector()` -> `injectBytes()`
    - Must find exactly 1 match (0 = error, >1 = abort)
 
 5. **Validate**:
-   - Resolve graph type from folder index (category value -> type mapping)
-   - Check existing graph type matches expected type
-   - Check incoming graph type matches expected type
+   - Resolve graph type from folder index via dual-path resolution:
+     - `findFolderEntryField()` searches both content entries (path 6.1.3.5) and meta entries (path 6.1.2.4.5)
+     - When multiple matches exist, content entries are preferred
+   - `resolveGraphTypeForTypeValue()` fallback chain:
+     1. First: scan all graphs sharing the same typeValue and infer type from their actual `NodeGraph.Id.type`
+     2. Fallback: use `DEFAULT_VALUE_TO_GRAPH_TYPE` static map (800→20000, 2300→20003, 2400→20004, 4300→20005)
+   - Check existing graph type matches expected type (warn on mismatch, does NOT abort)
+   - Check incoming graph type matches expected type (warn on mismatch, does NOT abort)
    - If target graph is non-empty and name doesn't start with `_GSTS`, abort (safety check)
 
 6. **Replace**:
@@ -122,7 +127,7 @@ This ensures the protobuf container structure remains valid after replacing an a
 
 1. Scan GIL for composite definitions (CompositeDef) that have signal definitions
 2. Extract signal name from CompositeDef field 107 -> nested field 101/102 -> name field 1
-3. Determine kind: `type=20002` -> sendServer, else `outputs>=3` -> monitor, else send
+3. Determine kind: `type=20002` (SIGNAL_NODE_TYPE_SKILLS) -> sendServer, else `outputs>=3` -> monitor, else send
 4. Build map: signal_name -> {send?, monitor?, sendServer?} -> NodeGraphIdInfo
 5. For each graph node with placeholder ID:
    - Extract signal name from ClientExecNode pin (kind=5, bString value)
@@ -136,10 +141,31 @@ Simple wrapper around `injectBytes`:
 2. Call `injectBytes()`
 3. Write result to `outPath` (defaults to overwriting original GIL)
 
+## Proto Schema Loading and Caching
+
+**File:** `src/injector/proto.ts`
+
+The protobuf schema (`gia.proto`) is loaded once via `protobufjs` and cached by absolute path in a `Map`. This means:
+- The schema is fixed at compile/load time and cannot adapt to game version changes at runtime
+- `Root` and `NodeGraph` message types are resolved from the proto and reused for all encode/decode operations
+- GIA files use the `Root` message for their envelope; GIL NodeGraph blobs use the `NodeGraph` message directly
+
+## GIL Reader (Non-Injection Pipeline)
+
+**File:** `src/injector/reader.ts`
+
+The reader module uses the same parsing infrastructure (`parseMessage`, `buildGraphTypeMap`, `findNodeGraphTargets`) but for read-only inspection rather than injection. It supports:
+- `readGilNodeGraphs()`: list all NodeGraph summaries (id, name, type, node/variable counts) without full decode
+- `readGilNodeGraph()`: fully decode a single NodeGraph by ID (variables, nodes, connections, signal names)
+
+Used by `inspect` and `scaffold` CLI commands. Not part of the injection pipeline itself.
+
 ## Sources
 
 - `src/compiler/ir_to_gia_transform/` — IR -> GIA 변환
 - `src/injector/index.ts` — createInjector, injectBytes
 - `src/injector/node_graph.ts` — NodeGraph 스캔/패치
 - `src/injector/signal_nodes.ts` — 시그널 노드 해석
+- `src/injector/reader.ts` — GIL 읽기 전용 리더 (inspect/scaffold용)
+- `src/injector/proto.ts` — protobuf 스키마 로딩/캐싱
 - `protobuf/decode.ts` — wrap/unwrap

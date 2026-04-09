@@ -1,6 +1,14 @@
 # Handoff — genshin-ts 포크 관리
 
-## 배경
+## Refs
+
+notes/protocol/injection-reference-for-mw-editor.md | mw-editor용 인젝션 참조 문서 (self-contained)
+notes/protocol/injection-flow.md | 인젝션 흐름 프로토콜 (보강됨)
+notes/architecture/05-injector.md | injector 아키텍처 (보강됨)
+? .claude/tree/gsts/nodes/inject-analyst/workspace/inject-analysis.md | injector 소스 상세 분석
+? .claude/tree/gsts/nodes/compat-test/workspace/result.md | GIL 호환성 테스트 결과
+
+## Background
 
 - 다른 사람이 만든 프로젝트를 포크하여 사용 중
 - 원본(upstream) repo는 계속 업데이트 중이므로 머지를 고려한 구조 유지 필요
@@ -22,21 +30,22 @@ MiliastraWonderland/
 - 팀원: `npm install`만으로 포크 버전 자동 설치 (genshin-ts 클론 불필요)
 - UID/맵 파일 혼동 방지: `gsts.config.ts`를 `.gitignore`에 추가 + `gsts.config.template.ts` 제공
 
-## 현재 상태
+## Progress
 
-- **마이그레이션 완료**: 소스, 샘플 파일, 프로토콜 문서 전부 이관됨
-- **버그 수정 완료** (`9415773`): signal args 전파 (`core.ts`), entity parseValue 폴백 (`nodes.ts`), monitor_signal output pin (`ir_to_gia_transform`)
-- **프로토콜 문서 통합 완료**: 14개(gia-protocol) + 5개(기존) → 18개 통합 문서 (notes/protocol/)
-- **전체 빌드 테스트 통과**: 6개 샘플 폴더 전부 GIA 생성 성공 (sandbox에서 검증)
-- **마이그레이션 최종 완료**: genshin-ts-run → legacy/ 이동 완료. 샘플 파일, prompt-reference, gia-protocol 문서 전부 이관됨
+**완료:**
+- 마이그레이션 완료 (소스, 샘플, 프로토콜 문서 전부 이관)
+- 버그 수정 (`9415773`): signal args, parseValue, monitor_signal
+- 프로토콜 문서 통합: 18개 통합 문서 (notes/protocol/)
+- 전체 빌드 테스트 통과 (6개 샘플 폴더)
+- **GIL 호환성 테스트** (`3e6c708`): 게임 버전 업데이트 후 GIL 포맷 변경 없음 확인. `1073741966.gil` 대상 인젝션 3건 성공
+- **Injector 문서 보강** (`3e6c708`): injection-flow.md, 05-injector.md에 8개 갭 추가. mw-editor용 self-contained 참조 문서 신규 작성
 
-## 남은 작업
+**남은 작업:**
+1. **3개 프로젝트 push** — genshin-ts, gsts-sandbox, elementalist
+2. **mw-editor 개발 착수** — 설계 논의 완료 (DISCUSSION.md), 인젝션 참조 문서 준비됨
+3. **elementalist 게임 로직 개발** — 세팅만 완료, 미착수
 
-1. **3개 프로젝트 push** — genshin-ts, gsts-sandbox, elementalist 모두 push 대기 중
-3. **mw-editor 개발 착수** — 설계 논의 완료 (DISCUSSION.md), 프로젝트 초기화 필요
-4. **elementalist 게임 로직 개발** — 세팅만 완료, 실제 개발 미착수
-
-## 주요 결정사항
+## Decisions
 
 - **업스트림 머지 전략**: 주석 변경 제외로 코드 베이스가 upstream과 유사하게 유지됨
 - **.claude/ 트래킹**: 트리 에이전트 상태를 git에 포함하여 프로젝트와 동기화
@@ -55,6 +64,12 @@ MiliastraWonderland/
 - **프로토콜 문서**: notes/protocol/에 임시 보관, mw-editor에서 기능 구현 시마다 문서도 함께 업데이트하는 전략
 - **목표**: 스킬 이펙트 위치/좌표 수정, 프리팹 컴포넌트 편집, 스킬 속성 JSON export → 인젝션 원복, 이펙트 임베딩 검색
 - **상세 논의**: `D:\MyDrive\Repos\MiliastraWonderland\mw-editor\DISCUSSION.md`
+
+## Notes
+
+- **GIL 포맷 변경 없음 확인 (2026-04-09)**: 게임 버전 업데이트 후 테스트 — protobuf 스키마, 헤더, 인코딩 모두 동일. `1073741967.gil`은 빈 맵(79B)이라 실패한 것이었음
+- **Injector 취약점 6개 카테고리**: protobuf path 10.1.1, GIA Root 중첩, 헤더 매직 바이트(0x0326/0x0679), 20B 헤더 하드코딩, signal 필드 번호(107/101/102/4), 그래프 타입 매핑 — 향후 포맷 변경 시 이 지점들 우선 확인
+- **mw-editor inject 방식 깨짐**: genshin-ts의 injection-reference-for-mw-editor.md를 참고해야 함
 
 ## 참고
 

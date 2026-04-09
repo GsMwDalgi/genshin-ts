@@ -14,7 +14,9 @@
       "Bash(npm run:*)",
       "Bash(cd:*)",
       "Bash(cp \"D:/MyDrive/Repos/MiliastraWonderland/genshin-ts-run/docs/gia-protocol/effect-asset-catalog-timed.md\" \"D:/MyDrive/Repos/MiliastraWonderland/genshin-ts/notes/protocol/effect-catalog-timed.md\")",
-      "Bash(cp \"D:/MyDrive/Repos/MiliastraWonderland/genshin-ts-run/docs/gia-protocol/effect-asset-catalog-loop.md\" \"D:/MyDrive/Repos/MiliastraWonderland/genshin-ts/notes/protocol/effect-catalog-loop.md\")"
+      "Bash(cp \"D:/MyDrive/Repos/MiliastraWonderland/genshin-ts-run/docs/gia-protocol/effect-asset-catalog-loop.md\" \"D:/MyDrive/Repos/MiliastraWonderland/genshin-ts/notes/protocol/effect-catalog-loop.md\")",
+      "Bash(export PROJECT_ROOT=\"D:/MyDrive/Repos/MiliastraWonderland/genshin-ts\")",
+      "Bash(npx gsts:*)"
     ]
   }
 }
