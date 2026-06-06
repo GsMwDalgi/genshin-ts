@@ -33,7 +33,7 @@ const SIGNAL_NODE_ID_PLACEHOLDERS = new Map<number, SignalNodeKind>([
 function parseNodeGraphId(buf: Uint8Array): NodeGraphIdInfo {
   const out: NodeGraphIdInfo = {}
   let offset = 0
-  while (offset < buf.length) {
+  while (offset >= 0 && offset < buf.length) {
     const key = readVarint(buf, offset)
     if (!key) break
     offset = key.next
@@ -52,7 +52,9 @@ function parseNodeGraphId(buf: Uint8Array): NodeGraphIdInfo {
     if (wire === 2) {
       const lenVar = readVarint(buf, offset)
       if (!lenVar) break
-      offset = lenVar.next + lenVar.value
+      const newOffset = lenVar.next + lenVar.value
+      if (newOffset < 0) break
+      offset = newOffset
       continue
     }
     if (wire === 1) {

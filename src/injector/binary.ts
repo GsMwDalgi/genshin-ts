@@ -41,7 +41,7 @@ export function decodeUtf8(
 
 export function readFieldBytes(buf: Uint8Array, targetField: number): Uint8Array | undefined {
   let offset = 0
-  while (offset < buf.length) {
+  while (offset >= 0 && offset < buf.length) {
     const key = readVarint(buf, offset)
     if (!key) break
     offset = key.next
@@ -51,9 +51,10 @@ export function readFieldBytes(buf: Uint8Array, targetField: number): Uint8Array
       const lenVar = readVarint(buf, offset)
       if (!lenVar) break
       const len = lenVar.value
+      if (len < 0) break
       const dataStart = lenVar.next
       const dataEnd = dataStart + len
-      if (dataEnd > buf.length) break
+      if (dataEnd > buf.length || dataEnd < 0) break
       const data = buf.subarray(dataStart, dataEnd)
       if (field === targetField) return data
       offset = dataEnd
@@ -81,7 +82,7 @@ export function readFieldBytes(buf: Uint8Array, targetField: number): Uint8Array
 export function readFieldMessages(buf: Uint8Array, targetField: number): Uint8Array[] {
   const list: Uint8Array[] = []
   let offset = 0
-  while (offset < buf.length) {
+  while (offset >= 0 && offset < buf.length) {
     const key = readVarint(buf, offset)
     if (!key) break
     offset = key.next
@@ -91,9 +92,10 @@ export function readFieldMessages(buf: Uint8Array, targetField: number): Uint8Ar
       const lenVar = readVarint(buf, offset)
       if (!lenVar) break
       const len = lenVar.value
+      if (len < 0) break
       const dataStart = lenVar.next
       const dataEnd = dataStart + len
-      if (dataEnd > buf.length) break
+      if (dataEnd > buf.length || dataEnd < 0) break
       const data = buf.subarray(dataStart, dataEnd)
       if (field === targetField) list.push(data)
       offset = dataEnd

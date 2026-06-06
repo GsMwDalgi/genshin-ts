@@ -32,6 +32,7 @@ import {
   DictValueType,
   ensureLiteralStr,
   entity,
+  entityLiteral,
   EntityValue,
   enumeration,
   faction,
@@ -243,6 +244,10 @@ export function parseValue(v: any, type: ValueType) {
     case 'entity': {
       if (z.instanceof(entity).safeParse(v).success) {
         return v as entity
+      }
+      const result = z.union([z.int(), z.bigint()]).safeParse(v)
+      if (result.success) {
+        return new entityLiteral(result.data)
       }
       break
     }
