@@ -1,0 +1,29 @@
+{
+  "name": "fork-sync",
+  "type": "distributor",
+  "role": "Fork 유지보수 총괄 — 변형 유지/upstream 변형 최소화/지속 통합, 구현·리뷰 분할 조율",
+  "role_doc": "",
+  "model": "opus",
+  "covers": [],
+  "parent": "leader",
+  "children": [
+    "fork-sync~impl",
+    "fork-sync~review"
+  ],
+  "status": "idle",
+  "generation": 1,
+  "model_detected": "claude-opus-4-8",
+  "agent_id": "a4d79a82d9c97f8c7",
+  "started_at": "2026-06-06T23:30:26",
+  "last_active": "2026-06-07T01:07:06",
+  "team_name": "gsts",
+  "transcript_path": "C:\\Users\\Rterg\\.claude\\projects\\D--MyDrive-Repos-MiliastraWonderland-genshin-ts\\ab0df7e1-da4a-47ec-906c-f052a6005233\\subagents\\agent-a4d79a82d9c97f8c7.jsonl",
+  "tokens": {
+    "total_input_tokens": 43785,
+    "total_output_tokens": 115958,
+    "total_cache_read_tokens": 15040310,
+    "total_cache_create_tokens": 1771239,
+    "last_context_size": 160171,
+    "turn_count": 190
+  }
+}

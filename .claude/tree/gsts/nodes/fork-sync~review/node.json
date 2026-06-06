@@ -1,0 +1,26 @@
+{
+  "name": "fork-sync~review",
+  "type": "executor",
+  "role": "통합 검수 — impl 산출물(패치번들/워크플로) 독립 리뷰: 변형 보존·버그수정 무결성·충돌위험 검증",
+  "role_doc": "",
+  "model": "opus",
+  "covers": [],
+  "parent": "fork-sync",
+  "children": [],
+  "status": "idle",
+  "generation": 1,
+  "model_detected": "claude-opus-4-8",
+  "agent_id": "a1ba8c5a9d788650d",
+  "started_at": "2026-06-06T23:46:59",
+  "last_active": "2026-06-07T01:04:37",
+  "team_name": "gsts",
+  "transcript_path": "C:\\Users\\Rterg\\.claude\\projects\\D--MyDrive-Repos-MiliastraWonderland-genshin-ts\\ab0df7e1-da4a-47ec-906c-f052a6005233\\subagents\\agent-a1ba8c5a9d788650d.jsonl",
+  "tokens": {
+    "total_input_tokens": 15572,
+    "total_output_tokens": 77170,
+    "total_cache_read_tokens": 10412558,
+    "total_cache_create_tokens": 750199,
+    "last_context_size": 130685,
+    "turn_count": 144
+  }
+}

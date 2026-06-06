@@ -1,0 +1,60 @@
+diff --git a/src/compiler/ir_to_gia_transform/index.ts b/src/compiler/ir_to_gia_transform/index.ts
+index 64a38e6..fbf2681 100644
+--- a/src/compiler/ir_to_gia_transform/index.ts
++++ b/src/compiler/ir_to_gia_transform/index.ts
+@@ -13,9 +13,10 @@ import { isListValueInfo, type ListValueInfo } from '../../runtime/variables.js'
+ import type { NodeType } from '../../thirdparty/Genshin-Impact-Miliastra-Wonderland-Code-Node-Editor-Pack/gia_gen/nodes.js'
+ import { Graph, Node, NodeIdFor, Pin, wrap_gia, type Root as GiaRoot } from '../gia_vendor.js'
+ import { buildExecutionGraph, layoutPositions } from './layout.js'
++import { SIGNAL_ARG_TYPE_MAP } from './mappings.js'
+ import { buildConnTypeIndex, resolveGiaNodeId } from './node_id.js'
+ import { optimizeTimerDispatchAggregate } from './optimize_timer_dispatch.js'
+-import { setClientExecLiteralArgValue, setEnumArgValue, setLiteralArgValue } from './pins.js'
++import { ensureInputPinWithType, setClientExecLiteralArgValue, setEnumArgValue, setLiteralArgValue } from './pins.js'
+ import { expandListLiterals } from './preprocess.js'
+ import type { IRNode, NodeId } from './types.js'
+ 
+@@ -331,6 +332,34 @@ export function irToGia(ir: IRDocument, opts: IrToGiaOptions): Uint8Array {
+       if (nameArg) {
+         setClientExecLiteralArgValue(giaNode, 0, 0, nodeType, nameArg.type, nameArg.value)
+       }
++      // Signal arguments: generate input pins for send_signal args
++      if (nodeType === 'send_signal' && irNode.signalParams) {
++        const args = irNode.args ?? []
++        for (let i = 0; i < irNode.signalParams.length; i++) {
++          const param = irNode.signalParams[i]
++          const arg = args[i + 1]
++          if (!arg) continue
++          if (isValueArg(arg)) {
++            setLiteralArgValue(giaNode, i, i, nodeType, arg.type, arg.value)
++          } else {
++            // conn type: create empty InParam pin with type info for Pin.encode() matching
++            ensureInputPinWithType(giaNode, i, param.type)
++          }
++        }
++      }
++      // Signal arguments: generate output pins for monitor_signal args
++      // Standard monitorSignal has 3 outputs (entity, guid, entity) at indices 0-2
++      if (nodeType === 'monitor_signal' && irNode.signalParams) {
++        const baseOutputCount = 3
++        for (let i = 0; i < irNode.signalParams.length; i++) {
++          const param = irNode.signalParams[i]
++          if (!SIGNAL_ARG_TYPE_MAP[param.type]) continue
++          const pinType = valueTypeToNodeType(param.type as ValueType)
++          const p = new Pin(giaNode.GenericId, 4, baseOutputCount + i)
++          p.setType(pinType)
++          giaNode.pins.push(p)
++        }
++      }
+       return true
+     }
+ 
+@@ -404,6 +433,8 @@ export function irToGia(ir: IRDocument, opts: IrToGiaOptions): Uint8Array {
+       case 'create_prefab':
+       case 'create_prefab_group':
+         return idx >= 4 ? idx + 1 : idx // hole at 4
++      case 'send_signal':
++        return idx - 1 // IR toIndex=1 (first arg at args[1]) → InParam index=0 (separate namespace from ClientExec)
+       default:
+         return idx
+     }

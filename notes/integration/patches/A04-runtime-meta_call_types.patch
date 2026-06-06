@@ -1,0 +1,12 @@
+diff --git a/src/runtime/meta_call_types.ts b/src/runtime/meta_call_types.ts
+index d10e189..9936aae 100644
+--- a/src/runtime/meta_call_types.ts
++++ b/src/runtime/meta_call_types.ts
+@@ -7,6 +7,7 @@ export interface MetaCallRecord {
+   type: MetaCallRecordType
+   nodeType: string
+   args: value[]
++  signalParams?: Array<{ name: string; type: string }>
+ }
+ 
+ export type MetaCallRecordRef = Readonly<MetaCallRecord>

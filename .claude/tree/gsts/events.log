@@ -1,0 +1,81 @@
+2026-06-06T23:17:16 | cli | task-dispatch | leader^fork-changes-inventory role=- model=opus
+2026-06-06T23:27:01 | cli | task-dispatch | leader^inspect-scaffold-realfile-test role=- model=opus
+2026-06-06T23:27:01 | cli | init | fork-steward type=distributor model=opus
+2026-06-06T23:27:01 | cli | send | leader->fork-steward TASK_ASSIGN liveness=ALIVE
+2026-06-06T23:30:10 | cli | task-dispatch | leader^inspect-scaffold-verify role=- model=opus
+2026-06-06T23:30:10 | cli | init | fork-sync type=distributor model=opus
+2026-06-06T23:30:11 | cli | send | leader->fork-sync TASK_ASSIGN liveness=ALIVE
+2026-06-06T23:30:26 | hook | SubagentStart | fork-sync gen=1
+2026-06-06T23:30:31 | cli | startup | fork-sync gen=1
+2026-06-06T23:33:36 | hook | SubagentStop | fork-sync
+2026-06-06T23:33:37 | hook | TeammateIdle | fork-sync
+2026-06-06T23:38:53 | cli | init | fork-sync~impl type=executor model=opus
+2026-06-06T23:38:53 | cli | send | fork-sync->fork-sync~impl TASK_ASSIGN liveness=ALIVE
+2026-06-06T23:40:27 | hook | SubagentStart | fork-sync-impl gen=1
+2026-06-06T23:40:33 | cli | startup | fork-sync~impl gen=1
+2026-06-06T23:41:08 | cli | remove | fork-steward
+2026-06-06T23:45:03 | cli | send | fork-sync~impl->fork-sync TASK_RESULT liveness=ALIVE
+2026-06-06T23:45:14 | hook | SubagentStart | fork-sync gen=1
+2026-06-06T23:45:29 | hook | SubagentStop | fork-sync-impl
+2026-06-06T23:45:30 | hook | TeammateIdle | fork-sync-impl
+2026-06-06T23:46:26 | hook | SubagentStop | fork-sync
+2026-06-06T23:46:27 | hook | TeammateIdle | fork-sync
+2026-06-06T23:46:45 | cli | init | fork-sync~review type=executor model=opus
+2026-06-06T23:46:45 | cli | send | fork-sync->fork-sync~review TASK_ASSIGN liveness=ALIVE
+2026-06-06T23:46:59 | hook | SubagentStart | fork-sync-review gen=1
+2026-06-06T23:47:08 | cli | startup | fork-sync~review gen=1
+2026-06-06T23:48:22 | cli | send | leader->fork-sync TASK_ASSIGN liveness=ALIVE
+2026-06-06T23:48:30 | hook | SubagentStart | fork-sync gen=1
+2026-06-06T23:50:19 | cli | send | fork-sync~review->fork-sync TASK_RESULT liveness=ALIVE
+2026-06-06T23:50:52 | hook | SubagentStop | fork-sync-review
+2026-06-06T23:50:53 | hook | TeammateIdle | fork-sync-review
+2026-06-06T23:51:34 | hook | SubagentStop | fork-sync
+2026-06-06T23:51:35 | hook | TeammateIdle | fork-sync
+2026-06-06T23:51:35 | hook | SubagentStart | fork-sync gen=1
+2026-06-06T23:52:54 | cli | send | fork-sync->leader TASK_RESULT
+2026-06-06T23:53:43 | hook | SubagentStop | fork-sync
+2026-06-06T23:53:43 | hook | TeammateIdle | fork-sync
+2026-06-06T23:56:03 | hook | SubagentStart | fork-sync gen=1
+2026-06-06T23:57:15 | cli | send | fork-sync->fork-sync~impl TASK_ASSIGN liveness=DEAD
+2026-06-06T23:58:22 | hook | SubagentStop | fork-sync
+2026-06-06T23:58:23 | hook | TeammateIdle | fork-sync
+2026-06-06T23:58:46 | hook | SubagentStart | fork-sync-impl gen=1
+2026-06-06T23:58:52 | cli | startup | fork-sync~impl gen=1
+2026-06-07T00:12:07 | cli | send | fork-sync~impl->fork-sync TASK_RESULT liveness=ALIVE
+2026-06-07T00:12:17 | hook | SubagentStart | fork-sync gen=1
+2026-06-07T00:12:35 | hook | SubagentStop | fork-sync-impl
+2026-06-07T00:12:36 | hook | TeammateIdle | fork-sync-impl
+2026-06-07T00:13:23 | cli | send | fork-sync->fork-sync~review TASK_ASSIGN liveness=DEAD
+2026-06-07T00:14:14 | hook | SubagentStop | fork-sync
+2026-06-07T00:14:14 | hook | TeammateIdle | fork-sync
+2026-06-07T00:17:27 | hook | SubagentStart | fork-sync-review gen=1
+2026-06-07T00:17:34 | cli | startup | fork-sync~review gen=1
+2026-06-07T00:36:09 | cli | send | fork-sync~review->fork-sync TASK_RESULT liveness=ALIVE
+2026-06-07T00:36:28 | hook | SubagentStart | fork-sync gen=1
+2026-06-07T00:36:46 | hook | SubagentStop | fork-sync-review
+2026-06-07T00:36:47 | hook | TeammateIdle | fork-sync-review
+2026-06-07T00:38:24 | cli | send | fork-sync->leader TASK_RESULT
+2026-06-07T00:38:53 | hook | SubagentStop | fork-sync
+2026-06-07T00:38:54 | hook | TeammateIdle | fork-sync
+2026-06-07T00:49:55 | hook | SubagentStart | fork-sync gen=1
+2026-06-07T00:51:08 | cli | send | fork-sync->fork-sync~impl TASK_ASSIGN liveness=DEAD
+2026-06-07T00:51:52 | hook | SubagentStop | fork-sync
+2026-06-07T00:51:53 | hook | TeammateIdle | fork-sync
+2026-06-07T00:53:33 | hook | SubagentStart | fork-sync-impl gen=1
+2026-06-07T00:53:40 | cli | startup | fork-sync~impl gen=1
+2026-06-07T00:56:57 | cli | send | fork-sync~impl->fork-sync TASK_RESULT liveness=ALIVE
+2026-06-07T00:57:10 | hook | SubagentStart | fork-sync gen=1
+2026-06-07T00:57:50 | hook | SubagentStop | fork-sync-impl
+2026-06-07T00:57:51 | hook | TeammateIdle | fork-sync-impl
+2026-06-07T00:58:14 | cli | send | fork-sync->fork-sync~review TASK_ASSIGN liveness=DEAD
+2026-06-07T00:59:26 | hook | SubagentStop | fork-sync
+2026-06-07T00:59:26 | hook | TeammateIdle | fork-sync
+2026-06-07T01:01:08 | hook | SubagentStart | fork-sync-review gen=1
+2026-06-07T01:01:15 | cli | startup | fork-sync~review gen=1
+2026-06-07T01:04:14 | cli | send | fork-sync~review->fork-sync TASK_RESULT liveness=ALIVE
+2026-06-07T01:04:22 | hook | SubagentStart | fork-sync gen=1
+2026-06-07T01:04:36 | hook | SubagentStop | fork-sync-review
+2026-06-07T01:04:37 | hook | TeammateIdle | fork-sync-review
+2026-06-07T01:06:03 | cli | send | fork-sync->leader TASK_RESULT
+2026-06-07T01:07:05 | hook | SubagentStop | fork-sync
+2026-06-07T01:07:06 | hook | TeammateIdle | fork-sync
