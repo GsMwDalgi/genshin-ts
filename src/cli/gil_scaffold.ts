@@ -35,24 +35,32 @@ const TYPE_TO_CONSTRUCTOR: Record<string, string> = {
   dict: 'dict'
 }
 
-// Collect which constructors are needed for the variable declarations
-function collectImports(variables: VariableDetail[]): string[] {
-  const needed = new Set<string>()
-  for (const v of variables) {
-    const ctor = TYPE_TO_CONSTRUCTOR[v.typeName]
-    if (ctor && ctor !== 'list' && ctor !== 'dict') {
-      needed.add(ctor)
-    }
-  }
-  // Always include g
-  const constructors = ['g', ...Array.from(needed).sort()]
-  return constructors
+// The scaffold uses the `g` server builder plus value constructors (bool, int,
+// vec3, list, dict, ...). `g` is a named export of `genshin-ts/runtime/core`,
+// while the value constructors are ambient globals (provided by the `gsts`
+// type package), so only `g` needs to be imported.
+const SCAFFOLD_IMPORT_LINE = `import { g } from 'genshin-ts/runtime/core'`
+
+// The `vec3` constructor takes a single `[x, y, z]` array argument. The reader
+// hands us a complete `vec3(x, y, z)` expression (positional args), which is both
+// double-wrapped when the ctor is reapplied and wrong-arity for `vec3(...)`.
+// Normalize any `vec3(a, b, c)` form to the valid single-wrap `vec3([a, b, c])`.
+function normalizeVec3(expr: string): string {
+  const m = expr.match(/^vec3\((.*)\)$/s)
+  if (!m) return expr
+  const inner = m[1].trim()
+  // Already an array literal (e.g. `vec3([0, 0, 0])`) -> leave as is.
+  if (inner.startsWith('[')) return expr
+  return `vec3([${inner}])`
 }
 
 function buildDefaultValue(v: VariableDetail): string {
   if (v.initialValue !== undefined) {
     const ctor = TYPE_TO_CONSTRUCTOR[v.typeName]
     if (!ctor || ctor === 'list' || ctor === 'dict') return v.initialValue
+    // vec3's reader initialValue is already a complete `vec3(...)` expression;
+    // re-wrapping would produce `vec3(vec3(...))`. Normalize instead of re-wrapping.
+    if (ctor === 'vec3') return normalizeVec3(v.initialValue)
     return `${ctor}(${v.initialValue})`
   }
   // Fallback defaults by type
@@ -61,13 +69,21 @@ function buildDefaultValue(v: VariableDetail): string {
     case 'int': return 'int(0)'
     case 'float': return 'float(0)'
     case 'str': return 'str("")'
-    case 'vec3': return 'vec3(0, 0, 0)'
+    case 'vec3': return 'vec3([0, 0, 0])'
     case 'guid': return 'guid(0)'
     case 'entity': return 'entity(0)'
     case 'prefab_id': return 'prefabId(0)'
     case 'config_id': return 'configId(0)'
     case 'faction': return 'faction(0)'
-    default: return `/* ${v.typeName} */`
+    case 'dict': return 'dict(0)'
+    default:
+      // *_list types (entity_list, int_list, ...) map to the `list` constructor.
+      // Emit an empty typed list `list('<elem>', [])` instead of a bare comment.
+      if (v.typeName.endsWith('_list')) {
+        const elem = v.typeName.slice(0, -'_list'.length)
+        return `list('${elem}', [])`
+      }
+      return `/* ${v.typeName} */`
   }
 }
 
@@ -116,8 +132,7 @@ function generateScaffold(detail: NodeGraphDetail, gilFileName: string): string 
   lines.push(``)
 
   // Build import line
-  const constructors = collectImports(detail.variables)
-  lines.push(`import { ${constructors.join(', ')} } from 'genshin-ts'`)
+  lines.push(SCAFFOLD_IMPORT_LINE)
   lines.push(``)
 
   // Determine graph type option
