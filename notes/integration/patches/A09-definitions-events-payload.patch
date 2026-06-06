@@ -1,0 +1,12 @@
+diff --git a/src/definitions/events-payload.ts b/src/definitions/events-payload.ts
+index 75b6be7..48d4c9c 100644
+--- a/src/definitions/events-payload.ts
++++ b/src/definitions/events-payload.ts
+@@ -6,6 +6,7 @@ import {
+   faction,
+   generic,
+   guid,
++  value,
+   vec3
+ } from '../runtime/value.js'
+ import {

@@ -1,0 +1,13 @@
+diff --git a/src/runtime/server_globals.d.ts b/src/runtime/server_globals.d.ts
+index 306b9ef..6eaed32 100644
+--- a/src/runtime/server_globals.d.ts
++++ b/src/runtime/server_globals.d.ts
+@@ -189,7 +189,7 @@ declare global {
+    *
+    * 信号名（仅支持字面量字符串）
+    */
+-  function send(signalName: StrValue): void
++  function send(signalName: StrValue, args?: Record<string, any>): void
+ 
+   /**
+    * Returns the Player Entity based on Player ID, where the ID indicates which Player they are

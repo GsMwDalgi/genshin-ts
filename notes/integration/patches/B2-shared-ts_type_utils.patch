@@ -1,0 +1,13 @@
+diff --git a/src/shared/ts_type_utils.ts b/src/shared/ts_type_utils.ts
+index ff0cf01..8155f1f 100644
+--- a/src/shared/ts_type_utils.ts
++++ b/src/shared/ts_type_utils.ts
+@@ -25,6 +25,8 @@ export function isEntityLikeType(
+   type: ts.Type,
+   location?: ts.Node
+ ): boolean {
++  if (type.flags & ts.TypeFlags.Any) return false
++
+   const aliasName = type.aliasSymbol?.getName() ?? type.symbol?.getName()
+   if (aliasName && looksLikeEntityTypeString(aliasName)) return true
+ 

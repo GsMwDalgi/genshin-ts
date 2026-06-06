@@ -1,0 +1,16 @@
+diff --git a/src/runtime/server_globals.ts b/src/runtime/server_globals.ts
+index 2b04828..272536b 100644
+--- a/src/runtime/server_globals.ts
++++ b/src/runtime/server_globals.ts
+@@ -553,9 +553,9 @@ function makeFactories(): ServerGlobalFactories {
+       ensureServerCtx('print')
+       gsts.f.printString(string)
+     },
+-    send: (signalName: StrValue) => {
++    send: (signalName: StrValue, args?: Record<string, any>) => {
+       ensureServerCtx('send')
+-      gsts.f.sendSignal(signalName)
++      gsts.f.sendSignal(signalName, args as any)
+     },
+     player: (playerId: IntValue) => {
+       ensureServerCtx('player')

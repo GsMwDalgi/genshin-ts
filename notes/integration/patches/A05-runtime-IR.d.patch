@@ -1,0 +1,12 @@
+diff --git a/src/runtime/IR.d.ts b/src/runtime/IR.d.ts
+index e03e27f..c131d80 100644
+--- a/src/runtime/IR.d.ts
++++ b/src/runtime/IR.d.ts
+@@ -68,6 +68,7 @@ export interface Node {
+   position?: [number, number]
+   args?: Argument[]
+   next?: NextConnection[]
++  signalParams?: Array<{ name: string; type: string }>
+ }
+ 
+ export type ServerNode = SimplifyDeep<

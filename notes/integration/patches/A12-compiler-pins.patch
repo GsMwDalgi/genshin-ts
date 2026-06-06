@@ -1,0 +1,39 @@
+diff --git a/src/compiler/ir_to_gia_transform/pins.ts b/src/compiler/ir_to_gia_transform/pins.ts
+index 9960414..00b8356 100644
+--- a/src/compiler/ir_to_gia_transform/pins.ts
++++ b/src/compiler/ir_to_gia_transform/pins.ts
+@@ -100,6 +100,10 @@ export function setLiteralArgValue(
+     return
+   }
+   if (argType === 'entity' && value === null) {
++    if (nodeType === 'send_signal') {
++      const pin = ensureInputPin(giaNode, pinIndex)
++      pin.setType({ t: 'b', b: 'Ety' })
++    }
+     return
+   }
+ 
+@@ -135,6 +139,23 @@ export function setLiteralArgValue(
+   giaNode.setVal(pinIndex, value as BasicValue)
+ }
+ 
++export function ensureInputPinWithType(giaNode: GiaNode, pinIndex: number, argType: string) {
++  const pin = ensureInputPin(giaNode, pinIndex)
++  if (argType.endsWith('_list')) {
++    const listBase = argType.slice(0, -5)
++    const itemBase = toVendorBaseTag(listBase)
++    if (itemBase) {
++      pin.setType({ t: 'l', i: { t: 'b', b: itemBase } })
++    }
++  } else {
++    const base = toVendorBaseTag(argType)
++    if (base) {
++      pin.setType({ t: 'b', b: base })
++    }
++  }
++  return pin
++}
++
+ export function setClientExecLiteralArgValue(
+   giaNode: GiaNode,
+   pinIndex: number,
