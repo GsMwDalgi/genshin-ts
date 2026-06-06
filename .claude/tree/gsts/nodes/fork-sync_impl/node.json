@@ -1,0 +1,26 @@
+{
+  "name": "fork-sync_impl",
+  "type": "executor",
+  "role": "통합 구현 — signal-args 패치 번들 + integration-workflow.md 초안 (notes/)",
+  "role_doc": "",
+  "model": "opus",
+  "covers": [],
+  "parent": "fork-sync",
+  "children": [],
+  "status": "idle",
+  "generation": 2,
+  "model_detected": "claude-opus-4-8",
+  "agent_id": "a26f37253c1567cd6",
+  "started_at": "",
+  "last_active": "2026-06-07T00:57:51",
+  "team_name": "gsts",
+  "transcript_path": "C:\\Users\\Rterg\\.claude\\projects\\D--MyDrive-Repos-MiliastraWonderland-genshin-ts\\ab0df7e1-da4a-47ec-906c-f052a6005233\\subagents\\agent-a26f37253c1567cd6.jsonl",
+  "tokens": {
+    "total_input_tokens": 16732,
+    "total_output_tokens": 114197,
+    "total_cache_read_tokens": 20718196,
+    "total_cache_create_tokens": 740917,
+    "last_context_size": 170586,
+    "turn_count": 208
+  }
+}

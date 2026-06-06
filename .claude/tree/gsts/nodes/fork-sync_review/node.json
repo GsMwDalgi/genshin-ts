@@ -1,0 +1,26 @@
+{
+  "name": "fork-sync_review",
+  "type": "executor",
+  "role": "통합 검수 — impl 산출물(패치번들/워크플로) 독립 리뷰: 변형 보존·버그수정 무결성·충돌위험 검증",
+  "role_doc": "",
+  "model": "opus",
+  "covers": [],
+  "parent": "fork-sync",
+  "children": [],
+  "status": "idle",
+  "generation": 1,
+  "model_detected": "claude-opus-4-8",
+  "agent_id": "",
+  "started_at": "",
+  "last_active": "2026-06-07T03:18:00",
+  "team_name": "gsts",
+  "transcript_path": "",
+  "tokens": {
+    "total_input_tokens": 0,
+    "total_output_tokens": 0,
+    "total_cache_read_tokens": 0,
+    "total_cache_create_tokens": 0,
+    "last_context_size": 0,
+    "turn_count": 0
+  }
+}

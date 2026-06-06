@@ -9,3 +9,6 @@ __pycache__/
 *.pyc
 examples/test.json
 *.tgz
+.vs/
+*.stackdump
+# .claude/ is intentionally tracked (tree-agent state, handoff, directives) — do NOT ignore
